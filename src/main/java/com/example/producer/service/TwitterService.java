@@ -1,7 +1,10 @@
 package com.example.producer.service;
 
+import twitter4j.JSONArray;
+import twitter4j.JSONObject;
+
 import java.io.IOException;
 
 public interface TwitterService {
-    public String getTweets(String tag) throws IOException;
+    public JSONArray getTweets(String tag) throws IOException;
 }

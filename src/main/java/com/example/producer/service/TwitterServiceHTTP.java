@@ -1,5 +1,7 @@
 package com.example.producer.service;
 
+import com.example.producer.processor.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -16,16 +18,26 @@ import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
+import twitter4j.JSONArray;
+import twitter4j.JSONObject;
 
 @Service
-
 public class TwitterServiceHTTP implements TwitterService{
     // TODO REMOVE THIS FROM THE CODE
-    private static final String bearerToken = null;
+    private static final String bearerToken = "AAAAAAAAAAAAAAAAAAAAAMz7awEAAAAALucP5IGdeyy2%2BWs2nMXqh3pmkQw%3DSgw1fgRZOI7hVSF6f3BsRTLWLZujeGHgYymcm3QxpWIgsr6HVr";
+    private final Converter converter;
+    private final DateConverter dateConverter;
+
+    @Autowired
+    public TwitterServiceHTTP(Converter converter, DateConverter dateConverter) {
+        this.converter = converter;
+        this.dateConverter = dateConverter;
+    }
 
     @Override
-    public String getTweets(String tag) throws IOException {
+    public JSONArray getTweets(String tag) throws IOException {
         String searchResponse = null;
+        JSONObject result = null;
 
         HttpClient httpClient = HttpClients.custom()
                 .setDefaultRequestConfig(RequestConfig.custom()
@@ -37,6 +49,8 @@ public class TwitterServiceHTTP implements TwitterService{
             ArrayList<NameValuePair> queryParameters;
             queryParameters = new ArrayList<>();
             queryParameters.add(new BasicNameValuePair("query", tag));
+            queryParameters.add(new BasicNameValuePair("tweet.fields", "created_at,lang"));
+
             uriBuilder.addParameters(queryParameters);
 
             HttpGet httpGet = new HttpGet(uriBuilder.build());
@@ -46,15 +60,39 @@ public class TwitterServiceHTTP implements TwitterService{
 
             HttpResponse response = httpClient.execute(httpGet);
             HttpEntity entity = response.getEntity();
+
             if (null != entity) {
                 searchResponse = EntityUtils.toString(entity, "UTF-8");
+                result = new JSONObject(searchResponse);
             }
 
         } catch (URISyntaxException e) {
             e.printStackTrace();
         }
 
+        JSONArray finalObject = new JSONArray();
+        JSONArray tempObject = result.getJSONArray("data");
+        for (int i=0; i<tempObject.length(); i++) {
+            JSONObject oj = tempObject.getJSONObject(i);
+            if (!oj.getString("lang").equals("en")) {
+                continue;
+            }
+            String tweet = oj.getString("text");
+            tweet = converter.convert(tweet);
 
-        return searchResponse;
+            String date = oj.getString("created_at");
+            date = dateConverter.convert(date);
+
+            JSONObject jsonArr1 = new JSONObject();
+            jsonArr1.put("text", tweet);
+            jsonArr1.put("date", date);
+            jsonArr1.put("id", oj.getInt("id"));
+            finalObject.put(jsonArr1);
+
+        }
+
+        System.out.println(finalObject);
+
+        return finalObject;
     }
 }
