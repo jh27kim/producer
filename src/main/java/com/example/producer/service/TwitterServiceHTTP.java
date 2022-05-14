@@ -78,7 +78,7 @@ public class TwitterServiceHTTP implements TwitterService{
                 continue;
             }
             String tweet = oj.getString("text");
-            tweet = converter.convert(tweet);
+//            tweet = converter.convert(tweet);
 
             String date = oj.getString("created_at");
             date = dateConverter.convert(date);

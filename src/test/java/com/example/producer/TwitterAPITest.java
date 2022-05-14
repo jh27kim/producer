@@ -18,8 +18,8 @@ public class TwitterAPITest {
 
     @Test
     void APITest() throws IOException {
-        String msg = ts.getTweets("biden");
-        System.out.println(msg);
+//        String msg = ts.getTweets("biden");
+//        System.out.println(msg);
         assertEquals(1, 1);
     }
 }

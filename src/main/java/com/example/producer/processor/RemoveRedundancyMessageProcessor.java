@@ -9,8 +9,13 @@ import java.util.regex.Pattern;
 public class RemoveRedundancyMessageProcessor implements MessageProcessor{
     @Override
     public String convert(String message) {
-        Pattern pattern = Pattern.compile("\"'(.*?)'\"");
+        // pattern에 regex 추가
+        Pattern pattern = Pattern.compile("&amp;|^RT @\\w+:|https:\\W+\\w+\\W+\\w+\\W+\\w+|@\\w+");
         Matcher matcher = pattern.matcher(message);
-        return message.replace(matcher.group(1), "");
+        while (matcher.find()) {
+            message = message.replace(matcher.group(), "");
+        }
+        System.out.println(message);
+        return message;
     }
 }
