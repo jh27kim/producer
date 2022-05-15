@@ -1,0 +1,11 @@
+server:
+    port: 8082
+
+spring:
+    rabbitmq:
+        host: localhost
+        port: 5672
+        username: guest
+        password: guest
+
+token: AAAAAAAAAAAAAAAAAAAAAMz7awEAAAAALucP5IGdeyy2%2BWs2nMXqh3pmkQw%3DSgw1fgRZOI7hVSF6f3BsRTLWLZujeGHgYymcm3QxpWIgsr6HVr

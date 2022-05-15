@@ -1,0 +1,45 @@
+plugins {
+	id 'org.springframework.boot' version '2.6.6'
+	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+	id 'java'
+}
+
+group = 'com.example'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '1.8'
+
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+}
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter-amqp'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	compileOnly 'org.projectlombok:lombok'
+	annotationProcessor 'org.projectlombok:lombok'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testImplementation 'org.springframework.amqp:spring-rabbit-test'
+	implementation files('src/main/resources/utils/twitter4j-async-4.0.7.jar')
+	implementation files('src/main/resources/utils/twitter4j-core-4.0.7.jar')
+	implementation files('src/main/resources/utils/twitter4j-examples-4.0.7.jar')
+	implementation files('src/main/resources/utils/twitter4j-stream-4.0.7.jar')
+	testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
+	testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
+
+	implementation 'org.apache.httpcomponents:httpclient:4.5.7'
+
+	// https://mvnrepository.com/artifact/com.vdurmont/emoji-java emoji
+	implementation 'com.vdurmont:emoji-java:4.0.0'
+
+
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+}
