@@ -1,5 +1,6 @@
 package com.example.producer;
 
+import com.vdurmont.emoji.EmojiParser;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -12,14 +13,16 @@ public class RegexPatternTest {
     @Test
     public void regexTest() {
         String result = "";
-        result = "@ottomul @sunnyek  @Troyel1968 Ye nefwefweded, 🤔 so they \"I have no intention of letting\" Biden finallity &amp; support.\\n\\nMelania right. #theMAGAKING https:\\/\\/t.co\\/hX8u0odRZF";
+        result = "@ottomul of the PKK, in Stockholm.\\nAsli Biden artik main royel1968 Ye https:\\/\\/t.co\\/zq6, 🤔 so they \"I have no 😩 intention of letting\" Biden finallity &amp; support.\\n\\nMelania right. #theMAGAKING https:\\/\\/t.co\\/hX8u0odRZF";
 //        result = "Absolutely perfect. Biden finally did one thing right. #theMAGAKING https:\\/\\/t.co\\/hX8u0odRZF ".replaceAll("https:\\W+\\w+\\W+\\w+\\W+\\w+", " ");
 //        result = "RT @JoJoFromJerz: Jill Biden visited with the First Lady of Ukraine bearing flowers in an act of solidarity &amp; support.\\n\\nMelania Trump visit… ".replaceAll("(\\W\\Wn)+", " ");
-        Pattern pattern = Pattern.compile("&amp;|^RT @\\w+:|https:\\W+\\w+\\W+\\w+\\W+\\w+|@\\w+|");
+        Pattern pattern = Pattern.compile("&amp;|^RT @\\w+:|https:\\W+\\w+\\W+\\w+\\W+\\w+|@\\w+");
         Matcher matcher = pattern.matcher(result);
         while (matcher.find()) {
-            result = result.replace(matcher.group(), "");
+            result = matcher.replaceAll("");
         }
+        result = EmojiParser.removeAllEmojis(result);
+        result = result.replace("\\n","");
         System.out.println(result);
 //        {"text":"RT @GamebredFighter: Cubans aren’t crazy we just lived it already. Baby formula shortage is manufactured by the Biden administration do the…"},
 //        {"text":"Absolutely perfect. Biden finally did one thing right. #theMAGAKING https:\/\/t.co\/hX8u0odRZF",},

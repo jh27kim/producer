@@ -1,5 +1,6 @@
 package com.example.producer.processor;
 
+import com.vdurmont.emoji.EmojiParser;
 import org.springframework.stereotype.Component;
 
 import java.util.regex.Matcher;
@@ -13,8 +14,10 @@ public class RemoveRedundancyMessageProcessor implements MessageProcessor{
         Pattern pattern = Pattern.compile("&amp;|^RT @\\w+:|https:\\W+\\w+\\W+\\w+\\W+\\w+|@\\w+");
         Matcher matcher = pattern.matcher(message);
         while (matcher.find()) {
-            message = message.replace(matcher.group(), "");
+            message = matcher.replaceAll("");
         }
+        message = EmojiParser.removeAllEmojis(message);
+        message = message.replace("\\n","");
         System.out.println(message);
         return message;
     }

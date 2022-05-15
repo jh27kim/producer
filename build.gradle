@@ -34,6 +34,10 @@ dependencies {
 
 	implementation 'org.apache.httpcomponents:httpclient:4.5.7'
 
+	// https://mvnrepository.com/artifact/com.vdurmont/emoji-java emoji
+	implementation 'com.vdurmont:emoji-java:4.0.0'
+
+
 }
 
 tasks.named('test') {
