@@ -12,7 +12,9 @@ public class RemoveRedundancyMessageProcessor implements MessageProcessor{
     public String convert(String message) {
         // pattern에 regex 추가
         Pattern pattern = Pattern.compile("&amp;|^rt @\\w+:|https://\\w+\\W+\\w+/\\w|@\\w+|(http://|https://){1}[\\w\\.\\-/:\\#\\?\\=\\&\\;\\%\\~\\+]+");
+        Pattern patternRT = Pattern.compile("^rt");
         Matcher matcher = pattern.matcher(message);
+        Matcher matcherRT = patternRT.matcher(message);
         while (matcher.find()) {
             message = matcher.replaceAll("");
         }

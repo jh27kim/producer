@@ -77,6 +77,11 @@ public class TwitterServiceHTTP implements TwitterService{
             if (!oj.getString("lang").equals("en")) {
                 continue;
             }
+
+            if(oj.getString("text").contains("RT")){
+                continue;
+            }
+
             String tweet = oj.getString("text");
             tweet = converter.convert(tweet);
 
