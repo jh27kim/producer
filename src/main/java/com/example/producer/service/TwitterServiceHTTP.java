@@ -1,6 +1,7 @@
 package com.example.producer.service;
 
 import com.example.producer.processor.*;
+import org.apache.http.client.ClientProtocolException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -36,7 +37,7 @@ public class TwitterServiceHTTP implements TwitterService{
     }
 
     @Override
-    public JSONArray getTweets(String tag) throws IOException {
+    public JSONArray getTweets(String tag)  {
 
         String searchResponse = null;
         JSONObject result = null;
@@ -69,6 +70,10 @@ public class TwitterServiceHTTP implements TwitterService{
             }
 
         } catch (URISyntaxException e) {
+            e.printStackTrace();
+        } catch (ClientProtocolException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
             e.printStackTrace();
         }
 
