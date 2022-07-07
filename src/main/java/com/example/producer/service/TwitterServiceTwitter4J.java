@@ -8,7 +8,7 @@ import twitter4j.conf.ConfigurationBuilder;
 @Service
 public class TwitterServiceTwitter4J implements TwitterService {
     @Override
-    public JSONArray getTweets(String tag) throws IOException {
+    public JSONObject getTweets(String tag) throws IOException {
         String msg = "";
 
         ConfigurationBuilder cb = new ConfigurationBuilder();
@@ -35,7 +35,7 @@ public class TwitterServiceTwitter4J implements TwitterService {
         }
 
 //        bw.close();
-        JSONArray res = new JSONArray(msg);
+        JSONObject res = new JSONObject(msg);
         return res;
 
     }

@@ -1,11 +1,13 @@
 package com.example.producer.service;
 
+import com.example.producer.service.nlp.NLPService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
-//import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-import twitter4j.JSONArray;
 import twitter4j.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 @RequiredArgsConstructor
@@ -14,23 +16,32 @@ public class TwitterScheduler {
     private final TwitterServiceHTTP twitterServiceHTTP;
     private static final String EXCHANGE_NAME = "sample.exchange";
     private final RabbitTemplate rabbitTemplate;
+    private final NLPService nlpService;
 
     public String doFixedDelayJob(String keyword) {
-        JSONArray message = twitterServiceHTTP.getTweets(keyword);
+        JSONObject message = twitterServiceHTTP.getTweets(keyword);
+
+        System.out.println(message);
+
         String returnString = "";
 
-        for (int i = 0; i < message.length(); i++) {
-            JSONObject obj = message.getJSONObject(i);
-            String id = obj.getString("id");
-            String text = obj.getString("text");
-            String date = obj.getString("date");
-
-            returnString += (id + "|" + text + "|" + date);
+        if (((ArrayList)message.get("text")).size() == 0) {
+            return "";
         }
 
-        // TODO 준승이 Python model {keyword: xxx, agree: int, disagree: int, neutral: int}
+        List<String> tweetTexts = ((ArrayList)message.get("text"));
+        List<String> tweetDates = ((ArrayList)message.get("date"));
+        List<String> tweetIds = ((ArrayList)message.get("id"));
 
-        System.out.println(returnString);
+        for (int i = 0; i < tweetTexts.size(); i++) {
+            String id = tweetIds.get(i);
+            String text = tweetTexts.get(i);
+            String date = tweetDates.get(i);
+
+            returnString +=  (id + "|" + text + "|" + date);
+        }
+
+        nlpService.getSentiment(message);
 
         return returnString;
 

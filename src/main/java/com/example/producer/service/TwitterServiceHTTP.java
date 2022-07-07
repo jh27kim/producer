@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -37,7 +38,7 @@ public class TwitterServiceHTTP implements TwitterService{
     }
 
     @Override
-    public JSONArray getTweets(String tag)  {
+    public JSONObject getTweets(String tag)  {
 
         String searchResponse = null;
         JSONObject result = null;
@@ -77,7 +78,11 @@ public class TwitterServiceHTTP implements TwitterService{
             e.printStackTrace();
         }
 
-        JSONArray finalObject = new JSONArray();
+        JSONObject finalObject = new JSONObject();
+        List<String> tweetTexts = new ArrayList<>();
+        List<String> tweetDates = new ArrayList<>();
+        List<String> tweetIds = new ArrayList<>();
+
         JSONArray tempObject = result.getJSONArray("data");
         for (int i=0; i<tempObject.length(); i++) {
             JSONObject oj = tempObject.getJSONObject(i);
@@ -95,13 +100,14 @@ public class TwitterServiceHTTP implements TwitterService{
             String date = oj.getString("created_at");
             date = dateConverter.convert(date);
 
-            JSONObject jsonArr1 = new JSONObject();
-            jsonArr1.put("text", tweet);
-            jsonArr1.put("date", date);
-            jsonArr1.put("id", oj.getString("id"));
-            finalObject.put(jsonArr1);
-
+            tweetTexts.add(tweet);
+            tweetDates.add(date);
+            tweetIds.add(oj.getString("id"));
         }
+
+        finalObject.put("text", tweetTexts);
+        finalObject.put("id", tweetIds);
+        finalObject.put("date", tweetDates);
 
         return finalObject;
     }

@@ -5,6 +5,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
+
 @Slf4j
 @RestController
 @RequiredArgsConstructor
@@ -17,5 +19,6 @@ public class ChartController {
         // TODO Make this Async
         log.info("{}", keyword);
         return twitterScheduler.doFixedDelayJob(keyword);
+//        return "null";
     }
 }
