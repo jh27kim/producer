@@ -4,10 +4,10 @@
 - SpringBoot
 - RabbitMQ
 
-## Process
+## Tasks
 1. Send request to Twitter
-2. Parse API response for data analysis
-3. Send to Consumer
+2. Send response from (1) to Python NLP Server
+3. Send the result to Vue Component
 
 ## Commit Rule
 ```bash
@@ -32,3 +32,19 @@ See also : #issue, ...(참고 이슈, 생략 가능)
 ex)
 feat: add regex method / fix: update twitter info
 ```
+
+
+## System Architecture 
+
+Web: Spring boot
+NLP: Python (FAST API)
+WAS: Spring boot 
+
+NLP and WAS servers are resource-intensive which is why we separated these two. 
+Each request/response is colored differently to show each task
+- Green: Axios requests for newest chart data
+- Red: Spring requests for newest tweets about a given keyword (from user) and receives latest tweets
+- Blue: Processed text is sent to python NLP Servers. NLP models analyse sentiment of the tweets. (eg. Positive, Negative, Neutral)
+- Purple: Spring saves latest data about the keyword
+
+![image](https://user-images.githubusercontent.com/58447982/175815663-f00fd396-58fc-44f6-b495-a944cc1c6049.png)
