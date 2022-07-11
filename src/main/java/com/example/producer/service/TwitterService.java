@@ -6,5 +6,5 @@ import twitter4j.JSONObject;
 import java.io.IOException;
 
 public interface TwitterService {
-    public JSONObject getTweets(String tag) throws IOException;
+    public JSONArray getTweets(String tag) throws IOException;
 }

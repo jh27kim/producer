@@ -8,4 +8,18 @@ spring:
         username: guest
         password: guest
 
+
+    datasource:
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        url: jdbc:mysql://localhost:3306/twitterdashboard?serverTimezone=UTC&characterEncoding=UTF-8
+        username: root
+        password: root
+
+    jpa:
+        database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
+        open-in-view: false
+        show-sql: true
+        hibernate:
+            format_sql: true
+
 token: AAAAAAAAAAAAAAAAAAAAAMz7awEAAAAALucP5IGdeyy2%2BWs2nMXqh3pmkQw%3DSgw1fgRZOI7hVSF6f3BsRTLWLZujeGHgYymcm3QxpWIgsr6HVr
