@@ -1,12 +1,14 @@
 package com.example.producer.service;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
+import com.example.producer.dao.MetaTableDao;
+import com.example.producer.dao.SearchKeywordDao;
 import com.example.producer.dao.SearchKeywordDetailDao;
+import com.example.producer.entity.MetaTable;
+import com.example.producer.entity.SearchKeyword;
+import com.example.producer.entity.SearchKeywordDetail;
+import com.google.common.base.Splitter;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -23,14 +25,19 @@ import lombok.RequiredArgsConstructor;
 import twitter4j.JSONArray;
 import twitter4j.JSONObject;
 
+import javax.transaction.Transactional;
+
 
 @RequiredArgsConstructor
 @Service
 public class TwitterScheduler {
+    private final MetaTableDao metaTableDao;
     private final TwitterServiceHTTP twitterServiceHTTP;
     private static final String EXCHANGE_NAME = "sample.exchange";
     private final RabbitTemplate rabbitTemplate;
     private final SearchKeywordDetailDao searchKeywordDetailDao;
+    private final SearchKeywordDao searchKeywordDao;
+
     public String doFixedDelayJob(String keyword) {
         JSONArray message = twitterServiceHTTP.getTweets(keyword);
         Map<String, ArrayList<String>> bodySentenceByDate = new HashMap<>();
@@ -55,9 +62,7 @@ public class TwitterScheduler {
             e.printStackTrace();
         }
 
-        saveResponse(responseData);
-//        System.out.println(responseData.toString());
-//        System.out.println(message_log);
+        saveResponse(responseData, keyword);
 
         return responseData.toString(); // TODO : change type
 
@@ -72,10 +77,38 @@ public class TwitterScheduler {
     }
 
 //  responseData :  {2022-07-11={Strongly Positive=2, Positive=0, Negative=0, Strongly Negative=0, Neutral=1}}
-    private boolean saveResponse(Map<String,Object> responseData){
+    @Transactional(rollbackOn = NullPointerException.class)
+    public boolean saveResponse(Map<String,Object> responseData, String keyword){
+        int keywordId = searchKeywordDao.findByKeyword(keyword)
+                .orElseThrow(()-> new NullPointerException())
+                .getKeywordId(); // TODO : Exception Handling
+        System.out.println(keywordId);
+
         for (Map.Entry<String, Object> entry : responseData.entrySet()) {
             String YYYY_MM_DD = entry.getKey();
+            String YYYYMMDD = YYYY_MM_DD.replace("-","");
 
+            Map<String, String> keywordData = Splitter.on(", ")
+                    .withKeyValueSeparator("=")
+                    .split(entry.getValue().toString()
+                            .replace("{","")
+                            .replace("}",""));
+            SearchKeyword searchKeyword = new SearchKeyword();
+            for (Map.Entry<String,String> keyEntry : keywordData.entrySet()) {
+                String emotion = keyEntry.getKey();
+                int quantity = Integer.parseInt(keyEntry.getValue());
+                System.out.println(emotion);
+                String colCode = metaTableDao.findByColName(emotion)
+                        .orElseThrow(()-> new NullPointerException())
+                        .getColCode();
+                SearchKeywordDetail searchKeywordDetail = SearchKeywordDetail.builder()
+                        .colCode(colCode)
+                        .keywordId(keywordId)
+                        .quantity(quantity)
+                        .searchDate(YYYYMMDD)
+                        .build();
+                searchKeywordDetailDao.save(searchKeywordDetail);
+            }
 
 
         }
@@ -110,4 +143,5 @@ public class TwitterScheduler {
 
         return responseData;
     }
+
 }
