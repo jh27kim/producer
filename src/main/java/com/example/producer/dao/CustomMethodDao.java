@@ -17,7 +17,7 @@ public class CustomMethodDao {
 
     //  responseData :  {2022-07-11={Strongly Positive=2, Positive=0, Negative=0, Strongly Negative=0, Neutral=1}}
     @Transactional(rollbackOn = NullPointerException.class)
-    public boolean saveResponse(Map<String,Object> responseData, String keyword){
+    public Map<String, String> saveResponse(Map<String,Object> responseData, String keyword){
         int keywordId = searchKeywordDao.findByKeyword(keyword)
                 .orElseThrow(()-> new NullPointerException())
                 .getKeywordId(); // TODO : Exception Handling
@@ -49,6 +49,6 @@ public class CustomMethodDao {
                 searchKeywordDetailDao.save(searchKeywordDetail);
             }
         }
-        return true;
+        return keywordData;
     }
 }

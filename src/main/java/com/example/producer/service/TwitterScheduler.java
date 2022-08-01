@@ -9,6 +9,7 @@ import com.example.producer.dao.SearchKeywordDetailDao;
 import com.example.producer.entity.MetaTable;
 import com.example.producer.entity.SearchKeyword;
 import com.example.producer.entity.SearchKeywordDetail;
+import com.example.producer.model.SentimentDto;
 import com.google.common.base.Splitter;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.http.HttpEntity;
@@ -40,7 +41,7 @@ public class TwitterScheduler {
     private final SearchKeywordDao searchKeywordDao;
     private final CustomMethodDao customMethodDao;
 
-    public String doFixedDelayJob(String keyword) {
+    public List<SentimentDto> doFixedDelayJob(String keyword) {
         JSONArray message = twitterServiceHTTP.getTweets(keyword);
         Map<String, ArrayList<String>> bodySentenceByDate = new HashMap<>();
         String message_log = ""; // for logging
@@ -55,8 +56,8 @@ public class TwitterScheduler {
             message_log += (id + "|" + text + "|" + date +"\n");
         }
 
-        // TODO : delete try / catch
         Map<String,Object> responseData=null;
+
         try {
             responseData = requestSentiment(bodySentenceByDate);
         }
@@ -64,9 +65,12 @@ public class TwitterScheduler {
             e.printStackTrace();
         }
 
-        customMethodDao.saveResponse(responseData, keyword);
+        Map<String, String> sentimentMap = new HashMap<>();
+        sentimentMap = customMethodDao.saveResponse(responseData, keyword);
 
-        return responseData.toString(); // TODO : change type
+        List <SentimentDto>
+
+        return sentimentList;
 
 //        rabbitTemplate.convertAndSend(EXCHANGE_NAME, "twitter", returnString);
     }

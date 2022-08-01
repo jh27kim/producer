@@ -1,9 +1,12 @@
 package com.example.producer.controller;
 
+import com.example.producer.model.SentimentDto;
 import com.example.producer.service.TwitterScheduler;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -13,7 +16,7 @@ public class ChartController {
     private final TwitterScheduler twitterScheduler;
 
     @GetMapping("/chart-data/{keyword}")
-    public String samplePublish(@PathVariable String keyword) {
+    public List<SentimentDto> samplePublish(@PathVariable String keyword) {
         // TODO Make this Async
         log.info("{}", keyword);
         return twitterScheduler.doFixedDelayJob(keyword);
