@@ -2,6 +2,7 @@ package com.example.producer.model;
 
 import lombok.*;
 
+import java.util.List;
 import java.util.Map;
 
 @Data
@@ -11,6 +12,6 @@ import java.util.Map;
 @Setter
 public class SentimentDto {
     private String date;
-    private Map<String, Integer> sentiment;
-
+    private List<String> labelList;
+    private List<Integer> quantityList;
 }
