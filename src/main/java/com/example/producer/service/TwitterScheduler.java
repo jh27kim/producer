@@ -43,7 +43,7 @@ public class TwitterScheduler {
     private final SearchKeywordDao searchKeywordDao;
     private final CustomMethodDao customMethodDao;
 
-    @Transactional
+    @Transactional(rollbackOn = NullPointerException.class)
     public List<SentimentDto> doFixedDelayJob(String keyword) {
         JSONArray message = twitterServiceHTTP.getTweets(keyword);
         Map<String, ArrayList<String>> bodySentenceByDate = new HashMap<>();
