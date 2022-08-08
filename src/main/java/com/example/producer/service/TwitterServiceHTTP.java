@@ -78,7 +78,6 @@ public class TwitterServiceHTTP implements TwitterService{
         }
 
         JSONArray finalObject = new JSONArray();
-
         JSONArray tempObject = result.getJSONArray("data");
         for (int i=0; i<tempObject.length(); i++) {
             JSONObject oj = tempObject.getJSONObject(i);
